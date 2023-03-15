@@ -51,7 +51,7 @@ body {
 }
 
 .bgimg {
-    background-image: url(../images/bg-im.jpg);
+    background-image: url(../images/bg-img.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -173,3 +173,7 @@ body {
     filter: blur(0);
     transform: translateX(0);
 }
+
+#wa_btn-content p {
+    padding: 0px;
+  }
