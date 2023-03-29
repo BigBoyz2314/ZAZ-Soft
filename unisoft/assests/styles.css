@@ -1,0 +1,26 @@
+label {
+    font-weight: bold;
+    font-size: large;
+}
+
+.tableDiv {
+    max-height: 100px;
+}
+
+.inp {
+    height: 60px;
+    font-size: 20px;
+    border: 1px solid black;
+}
+
+option {
+    font-size: 20px;
+}
+
+tbody tr {
+    height: 40px;
+}
+
+.bg-success-old {
+    background-color: rgb(24, 172, 24);
+}
