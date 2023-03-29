@@ -7,16 +7,10 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto font-weight-bold">
       <li class="nav-item">
-        <a class="nav-link" href="article-profile.php">Add Article</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="article-profile.php">Article Profile</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="process.php">Add Process</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="index.php">Add Plan</a>
       </li>
     </ul>
     <ul class="navbar-nav">

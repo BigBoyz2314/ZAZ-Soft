@@ -15,1144 +15,1053 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link rel="stylesheet" href="assests/styles.css">
-    <title>Add Plan</title>
+    <title>Article Profile</title>
+    <style>
+    </style>
 </head>
+
 <body class="bg-dark text-warning">
-    <?php 
-        require_once('./includes/config.php');
+
+    <?php
+    require_once('./includes/config.php');
     ?>
     <?php
     include('navbar.php');
     ?>
-    <div class="container mt-5">
-        <div class="row mt-5">
-            <div class="col-md-6">
-                <h1>Create Production Plan</h1>
-            </div>
-            <div class="col-md-6 d-flex justify-content-end">
-                <a href="show-plan.php"><button class="btn btn-info">Go to See All</button></a>
-            </div>
+    
+    <div class="container-fluid mt-5">
+        <div class="row px-5">
+            <form action="./includes/add-article.inc.php" method="post" class="input-group">
+                <h3 class="me-4" id="add-article-head">Add Article</h3>
+                <div class="col-md-3 me-2">
+                    <input type="text" name="add-article" id="add-article" placeholder="Article ID..." class="form-control">
+                </div>
+                <div class="col-md-3 me-2">
+                    <input type="text" name="add-market-name" id="add-market-name" placeholder="Article Name..." class="form-control">
+                </div>
+                <div class="col-md-1 me-2">
+                    <input type="text" name="size" id="size" placeholder="Size..." class="form-control">
+                </div>
+                <div class="col-md-1 me-2">
+                    <select name="category" id="category" class="form-select">
+                        <option value="">Select...</option>
+                        <?php
+                        $stmt = "SELECT category FROM categories";
+                        $result = $conn->query($stmt);
+                        
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "<option value='" . $row['category'] . "'>" . $row['category'] . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <input type="submit" value="Add Article" class="btn btn-success">
+                </div>
+            </form>
         </div>
-        <form action="./includes/add-data.inc.php" method="post" class="form-group">
-            <div class="row mt-5">
-                <div class="col-md-5">
-                    <label for="article">Select Article</label>
-                    <br>
-                    <input type="text" list="article-data" name="article" id="article" class="form-control inp">
-
-                        <datalist id="article-data">
-                    <?php
-                        $stmt = "SELECT article_name FROM data";
-                    $result = $conn->query($stmt);
+        <div class="row px-5 mt-3 align-items-center">
+            <div class="col-md-6 me-2">
+                <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="get" class="d-flex align-items-center">
+                        <h3 class="me-3 text-nowrap">View Profile</h3>
+                    <input type="text" name="view-profile" id="view-profile" placeholder="Article ID..." class="form-select" list="articles">
+                    <datalist id="articles">
+                        <?php
+                        $stmt = "SELECT DISTINCT article_name FROM data";
+                        $result = $conn->query($stmt);
 
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
                                 echo "<option value='" . $row['article_name'] . "'>" . $row['article_name'] . "</option>";
                             }
-                          }
+                        }
                         ?>
                     </datalist>
+                    <input type="submit" value="View Profile" class="btn btn-success ms-2">
                 </div>
-                <div class="col-md-2">
-                    <label for="">Select size</label>
-                    <br>
-                    <input type="text" name="size" id="size" list="size-data" class="form-control inp">
-                    <datalist id="size-data">
-                        <?php
-                        $stmt = "SELECT size FROM data";
-                        $result = $conn->query($stmt);
+            </form>
+            <?php
+        
+        error_reporting(E_ERROR | E_PARSE | E_NOTICE);
+        
+        if (empty($_GET)) {
+            
+        }
+        else {
+            $article_name = $_GET['view-profile'];
+            $stmt = "SELECT * FROM data WHERE article_name='$article_name'";
+            $result = $conn->query($stmt);
+            $row = $result->fetch_assoc();
+            $category = $row["category"];
+            $market = $row["market_name"];
+            echo'
+                <div class="col-md-5">
+                    <form action="" method="get" class="d-flex align-items-center">
+                    <h3 class="text-nowrap me-2">Select Size</h3>
+                    <input type="hidden" name="view-profile" value="'. $_GET['view-profile'] . '">
+                    <select name="select-size" id="select-size" class="form-select ms-4">
+                        <option value="">Select...</option>';
 
+                        $stmt = "SELECT size FROM data WHERE article_name = '$article_name'";
+                        $result = $conn->query($stmt);
+                        
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
-                                echo "<option value='" . $row['size'] . "'>" . $row['size'] . "</option>";
+                                echo '<option value=' . $row['size'] .'>' . $row['size'] . '</option>';
                             }
-                          }
-                        ?>
-                    </datalist>
-                </div>
-                <div class="col-md-5">
-                    <label for="">Color</label>
-                    <br>
-                    <input type="text" name="color" id="color" class="form-control inp">
-                    <br>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-5">
-                    <label for="">Plan No.</label>
-                    <br>
-                    <input type="text" name="plan" id="plan" class="form-control inp" maxlength="3">
-                </div>
-                <div class="col-md-2">
-                    <!-- <label for=">Lot From</label>
-                    <br>
-                    <select class="custom-select inp">
-                        <option value=""></option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                        <option>31</option>
-                        <option>32</option>
-                        <option>33</option>
-                        <option>34</option>
-                        <option>35</option>
-                        <option>36</option>
-                        <option>37</option>
-                        <option>38</option>
-                        <option>39</option>
-                        <option>40</option>
-                        <option>41</option>
-                        <option>42</option>
-                        <option>43</option>
-                        <option>44</option>
-                        <option>45</option>
-                        <option>46</option>
-                        <option>47</option>
-                        <option>48</option>
-                        <option>49</option>
-                        <option>50</option>
-                        <option>51</option>
-                        <option>52</option>
-                        <option>53</option>
-                        <option>54</option>
-                        <option>55</option>
-                        <option>56</option>
-                        <option>57</option>
-                        <option>58</option>
-                        <option>59</option>
-                        <option>60</option>
-                        <option>61</option>
-                        <option>62</option>
-                        <option>63</option>
-                        <option>64</option>
-                        <option>65</option>
-                        <option>66</option>
-                        <option>67</option>
-                        <option>68</option>
-                        <option>69</option>
-                        <option>70</option>
-                        <option>71</option>
-                        <option>72</option>
-                        <option>73</option>
-                        <option>74</option>
-                        <option>75</option>
-                        <option>76</option>
-                        <option>77</option>
-                        <option>78</option>
-                        <option>79</option>
-                        <option>80</option>
-                        <option>81</option>
-                        <option>82</option>
-                        <option>83</option>
-                        <option>84</option>
-                        <option>85</option>
-                        <option>86</option>
-                        <option>87</option>
-                        <option>88</option>
-                        <option>89</option>
-                        <option>90</option>
-                        <option>91</option>
-                        <option>92</option>
-                        <option>93</option>
-                        <option>94</option>
-                        <option>95</option>
-                        <option>96</option>
-                        <option>97</option>
-                        <option>98</option>
-                        <option>99</option>
-                        <option>100</option>
-                        <option>101</option>
-                        <option>102</option>
-                        <option>103</option>
-                        <option>104</option>
-                        <option>105</option>
-                        <option>106</option>
-                        <option>107</option>
-                        <option>108</option>
-                        <option>109</option>
-                        <option>110</option>
-                        <option>111</option>
-                        <option>112</option>
-                        <option>113</option>
-                        <option>114</option>
-                        <option>115</option>
-                        <option>116</option>
-                        <option>117</option>
-                        <option>118</option>
-                        <option>119</option>
-                        <option>120</option>
-                        <option>121</option>
-                        <option>122</option>
-                        <option>123</option>
-                        <option>124</option>
-                        <option>125</option>
-                        <option>126</option>
-                        <option>127</option>
-                        <option>128</option>
-                        <option>129</option>
-                        <option>130</option>
-                        <option>131</option>
-                        <option>132</option>
-                        <option>133</option>
-                        <option>134</option>
-                        <option>135</option>
-                        <option>136</option>
-                        <option>137</option>
-                        <option>138</option>
-                        <option>139</option>
-                        <option>140</option>
-                        <option>141</option>
-                        <option>142</option>
-                        <option>143</option>
-                        <option>144</option>
-                        <option>145</option>
-                        <option>146</option>
-                        <option>147</option>
-                        <option>148</option>
-                        <option>149</option>
-                        <option>150</option>
-                        <option>151</option>
-                        <option>152</option>
-                        <option>153</option>
-                        <option>154</option>
-                        <option>155</option>
-                        <option>156</option>
-                        <option>157</option>
-                        <option>158</option>
-                        <option>159</option>
-                        <option>160</option>
-                        <option>161</option>
-                        <option>162</option>
-                        <option>163</option>
-                        <option>164</option>
-                        <option>165</option>
-                        <option>166</option>
-                        <option>167</option>
-                        <option>168</option>
-                        <option>169</option>
-                        <option>170</option>
-                        <option>171</option>
-                        <option>172</option>
-                        <option>173</option>
-                        <option>174</option>
-                        <option>175</option>
-                        <option>176</option>
-                        <option>177</option>
-                        <option>178</option>
-                        <option>179</option>
-                        <option>180</option>
-                        <option>181</option>
-                        <option>182</option>
-                        <option>183</option>
-                        <option>184</option>
-                        <option>185</option>
-                        <option>186</option>
-                        <option>187</option>
-                        <option>188</option>
-                        <option>189</option>
-                        <option>190</option>
-                        <option>191</option>
-                        <option>192</option>
-                        <option>193</option>
-                        <option>194</option>
-                        <option>195</option>
-                        <option>196</option>
-                        <option>197</option>
-                        <option>198</option>
-                        <option>199</option>
-                        <option>200</option>
-                        <option>201</option>
-                        <option>202</option>
-                        <option>203</option>
-                        <option>204</option>
-                        <option>205</option>
-                        <option>206</option>
-                        <option>207</option>
-                        <option>208</option>
-                        <option>209</option>
-                        <option>210</option>
-                        <option>211</option>
-                        <option>212</option>
-                        <option>213</option>
-                        <option>214</option>
-                        <option>215</option>
-                        <option>216</option>
-                        <option>217</option>
-                        <option>218</option>
-                        <option>219</option>
-                        <option>220</option>
-                        <option>221</option>
-                        <option>222</option>
-                        <option>223</option>
-                        <option>224</option>
-                        <option>225</option>
-                        <option>226</option>
-                        <option>227</option>
-                        <option>228</option>
-                        <option>229</option>
-                        <option>230</option>
-                        <option>231</option>
-                        <option>232</option>
-                        <option>233</option>
-                        <option>234</option>
-                        <option>235</option>
-                        <option>236</option>
-                        <option>237</option>
-                        <option>238</option>
-                        <option>239</option>
-                        <option>240</option>
-                        <option>241</option>
-                        <option>242</option>
-                        <option>243</option>
-                        <option>244</option>
-                        <option>245</option>
-                        <option>246</option>
-                        <option>247</option>
-                        <option>248</option>
-                        <option>249</option>
-                        <option>250</option>
-                        <option>251</option>
-                        <option>252</option>
-                        <option>253</option>
-                        <option>254</option>
-                        <option>255</option>
-                        <option>256</option>
-                        <option>257</option>
-                        <option>258</option>
-                        <option>259</option>
-                        <option>260</option>
-                        <option>261</option>
-                        <option>262</option>
-                        <option>263</option>
-                        <option>264</option>
-                        <option>265</option>
-                        <option>266</option>
-                        <option>267</option>
-                        <option>268</option>
-                        <option>269</option>
-                        <option>270</option>
-                        <option>271</option>
-                        <option>272</option>
-                        <option>273</option>
-                        <option>274</option>
-                        <option>275</option>
-                        <option>276</option>
-                        <option>277</option>
-                        <option>278</option>
-                        <option>279</option>
-                        <option>280</option>
-                        <option>281</option>
-                        <option>282</option>
-                        <option>283</option>
-                        <option>284</option>
-                        <option>285</option>
-                        <option>286</option>
-                        <option>287</option>
-                        <option>288</option>
-                        <option>289</option>
-                        <option>290</option>
-                        <option>291</option>
-                        <option>292</option>
-                        <option>293</option>
-                        <option>294</option>
-                        <option>295</option>
-                        <option>296</option>
-                        <option>297</option>
-                        <option>298</option>
-                        <option>299</option>
-                        <option>300</option>
-                        <option>301</option>
-                        <option>302</option>
-                        <option>303</option>
-                        <option>304</option>
-                        <option>305</option>
-                        <option>306</option>
-                        <option>307</option>
-                        <option>308</option>
-                        <option>309</option>
-                        <option>310</option>
-                        <option>311</option>
-                        <option>312</option>
-                        <option>313</option>
-                        <option>314</option>
-                        <option>315</option>
-                        <option>316</option>
-                        <option>317</option>
-                        <option>318</option>
-                        <option>319</option>
-                        <option>320</option>
-                        <option>321</option>
-                        <option>322</option>
-                        <option>323</option>
-                        <option>324</option>
-                        <option>325</option>
-                        <option>326</option>
-                        <option>327</option>
-                        <option>328</option>
-                        <option>329</option>
-                        <option>330</option>
-                        <option>331</option>
-                        <option>332</option>
-                        <option>333</option>
-                        <option>334</option>
-                        <option>335</option>
-                        <option>336</option>
-                        <option>337</option>
-                        <option>338</option>
-                        <option>339</option>
-                        <option>340</option>
-                        <option>341</option>
-                        <option>342</option>
-                        <option>343</option>
-                        <option>344</option>
-                        <option>345</option>
-                        <option>346</option>
-                        <option>347</option>
-                        <option>348</option>
-                        <option>349</option>
-                        <option>350</option>
-                        <option>351</option>
-                        <option>352</option>
-                        <option>353</option>
-                        <option>354</option>
-                        <option>355</option>
-                        <option>356</option>
-                        <option>357</option>
-                        <option>358</option>
-                        <option>359</option>
-                        <option>360</option>
-                        <option>361</option>
-                        <option>362</option>
-                        <option>363</option>
-                        <option>364</option>
-                        <option>365</option>
-                        <option>366</option>
-                        <option>367</option>
-                        <option>368</option>
-                        <option>369</option>
-                        <option>370</option>
-                        <option>371</option>
-                        <option>372</option>
-                        <option>373</option>
-                        <option>374</option>
-                        <option>375</option>
-                        <option>376</option>
-                        <option>377</option>
-                        <option>378</option>
-                        <option>379</option>
-                        <option>380</option>
-                        <option>381</option>
-                        <option>382</option>
-                        <option>383</option>
-                        <option>384</option>
-                        <option>385</option>
-                        <option>386</option>
-                        <option>387</option>
-                        <option>388</option>
-                        <option>389</option>
-                        <option>390</option>
-                        <option>391</option>
-                        <option>392</option>
-                        <option>393</option>
-                        <option>394</option>
-                        <option>395</option>
-                        <option>396</option>
-                        <option>397</option>
-                        <option>398</option>
-                        <option>399</option>
-                        <option>400</option>
-                        <option>401</option>
-                        <option>402</option>
-                        <option>403</option>
-                        <option>404</option>
-                        <option>405</option>
-                        <option>406</option>
-                        <option>407</option>
-                        <option>408</option>
-                        <option>409</option>
-                        <option>410</option>
-                        <option>411</option>
-                        <option>412</option>
-                        <option>413</option>
-                        <option>414</option>
-                        <option>415</option>
-                        <option>416</option>
-                        <option>417</option>
-                        <option>418</option>
-                        <option>419</option>
-                        <option>420</option>
-                        <option>421</option>
-                        <option>422</option>
-                        <option>423</option>
-                        <option>424</option>
-                        <option>425</option>
-                        <option>426</option>
-                        <option>427</option>
-                        <option>428</option>
-                        <option>429</option>
-                        <option>430</option>
-                        <option>431</option>
-                        <option>432</option>
-                        <option>433</option>
-                        <option>434</option>
-                        <option>435</option>
-                        <option>436</option>
-                        <option>437</option>
-                        <option>438</option>
-                        <option>439</option>
-                        <option>440</option>
-                        <option>441</option>
-                        <option>442</option>
-                        <option>443</option>
-                        <option>444</option>
-                        <option>445</option>
-                        <option>446</option>
-                        <option>447</option>
-                        <option>448</option>
-                        <option>449</option>
-                        <option>450</option>
-                        <option>451</option>
-                        <option>452</option>
-                        <option>453</option>
-                        <option>454</option>
-                        <option>455</option>
-                        <option>456</option>
-                        <option>457</option>
-                        <option>458</option>
-                        <option>459</option>
-                        <option>460</option>
-                        <option>461</option>
-                        <option>462</option>
-                        <option>463</option>
-                        <option>464</option>
-                        <option>465</option>
-                        <option>466</option>
-                        <option>467</option>
-                        <option>468</option>
-                        <option>469</option>
-                        <option>470</option>
-                        <option>471</option>
-                        <option>472</option>
-                        <option>473</option>
-                        <option>474</option>
-                        <option>475</option>
-                        <option>476</option>
-                        <option>477</option>
-                        <option>478</option>
-                        <option>479</option>
-                        <option>480</option>
-                        <option>481</option>
-                        <option>482</option>
-                        <option>483</option>
-                        <option>484</option>
-                        <option>485</option>
-                        <option>486</option>
-                        <option>487</option>
-                        <option>488</option>
-                        <option>489</option>
-                        <option>490</option>
-                        <option>491</option>
-                        <option>492</option>
-                        <option>493</option>
-                        <option>494</option>
-                        <option>495</option>
-                        <option>496</option>
-                        <option>497</option>
-                        <option>498</option>
-                        <option>499</option>
-                        <option>500</option>
-                        
-                    </select> -->
-                    <label for="">Lot No.</label>
-                    <br>
-                    <input type="text" name="lot" id="lot" class="form-control inp" maxlength="3">
-                </div>
-                <div class="col-md-2">
-                    <!-- <label for=">Lot To</label>
-                    <br>
-                    <select class="custom-select inp">
-                        <option value=""></option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>15</option>
-                        <option>16</option>
-                        <option>17</option>
-                        <option>18</option>
-                        <option>19</option>
-                        <option>20</option>
-                        <option>21</option>
-                        <option>22</option>
-                        <option>23</option>
-                        <option>24</option>
-                        <option>25</option>
-                        <option>26</option>
-                        <option>27</option>
-                        <option>28</option>
-                        <option>29</option>
-                        <option>30</option>
-                        <option>31</option>
-                        <option>32</option>
-                        <option>33</option>
-                        <option>34</option>
-                        <option>35</option>
-                        <option>36</option>
-                        <option>37</option>
-                        <option>38</option>
-                        <option>39</option>
-                        <option>40</option>
-                        <option>41</option>
-                        <option>42</option>
-                        <option>43</option>
-                        <option>44</option>
-                        <option>45</option>
-                        <option>46</option>
-                        <option>47</option>
-                        <option>48</option>
-                        <option>49</option>
-                        <option>50</option>
-                        <option>51</option>
-                        <option>52</option>
-                        <option>53</option>
-                        <option>54</option>
-                        <option>55</option>
-                        <option>56</option>
-                        <option>57</option>
-                        <option>58</option>
-                        <option>59</option>
-                        <option>60</option>
-                        <option>61</option>
-                        <option>62</option>
-                        <option>63</option>
-                        <option>64</option>
-                        <option>65</option>
-                        <option>66</option>
-                        <option>67</option>
-                        <option>68</option>
-                        <option>69</option>
-                        <option>70</option>
-                        <option>71</option>
-                        <option>72</option>
-                        <option>73</option>
-                        <option>74</option>
-                        <option>75</option>
-                        <option>76</option>
-                        <option>77</option>
-                        <option>78</option>
-                        <option>79</option>
-                        <option>80</option>
-                        <option>81</option>
-                        <option>82</option>
-                        <option>83</option>
-                        <option>84</option>
-                        <option>85</option>
-                        <option>86</option>
-                        <option>87</option>
-                        <option>88</option>
-                        <option>89</option>
-                        <option>90</option>
-                        <option>91</option>
-                        <option>92</option>
-                        <option>93</option>
-                        <option>94</option>
-                        <option>95</option>
-                        <option>96</option>
-                        <option>97</option>
-                        <option>98</option>
-                        <option>99</option>
-                        <option>100</option>
-                        <option>101</option>
-                        <option>102</option>
-                        <option>103</option>
-                        <option>104</option>
-                        <option>105</option>
-                        <option>106</option>
-                        <option>107</option>
-                        <option>108</option>
-                        <option>109</option>
-                        <option>110</option>
-                        <option>111</option>
-                        <option>112</option>
-                        <option>113</option>
-                        <option>114</option>
-                        <option>115</option>
-                        <option>116</option>
-                        <option>117</option>
-                        <option>118</option>
-                        <option>119</option>
-                        <option>120</option>
-                        <option>121</option>
-                        <option>122</option>
-                        <option>123</option>
-                        <option>124</option>
-                        <option>125</option>
-                        <option>126</option>
-                        <option>127</option>
-                        <option>128</option>
-                        <option>129</option>
-                        <option>130</option>
-                        <option>131</option>
-                        <option>132</option>
-                        <option>133</option>
-                        <option>134</option>
-                        <option>135</option>
-                        <option>136</option>
-                        <option>137</option>
-                        <option>138</option>
-                        <option>139</option>
-                        <option>140</option>
-                        <option>141</option>
-                        <option>142</option>
-                        <option>143</option>
-                        <option>144</option>
-                        <option>145</option>
-                        <option>146</option>
-                        <option>147</option>
-                        <option>148</option>
-                        <option>149</option>
-                        <option>150</option>
-                        <option>151</option>
-                        <option>152</option>
-                        <option>153</option>
-                        <option>154</option>
-                        <option>155</option>
-                        <option>156</option>
-                        <option>157</option>
-                        <option>158</option>
-                        <option>159</option>
-                        <option>160</option>
-                        <option>161</option>
-                        <option>162</option>
-                        <option>163</option>
-                        <option>164</option>
-                        <option>165</option>
-                        <option>166</option>
-                        <option>167</option>
-                        <option>168</option>
-                        <option>169</option>
-                        <option>170</option>
-                        <option>171</option>
-                        <option>172</option>
-                        <option>173</option>
-                        <option>174</option>
-                        <option>175</option>
-                        <option>176</option>
-                        <option>177</option>
-                        <option>178</option>
-                        <option>179</option>
-                        <option>180</option>
-                        <option>181</option>
-                        <option>182</option>
-                        <option>183</option>
-                        <option>184</option>
-                        <option>185</option>
-                        <option>186</option>
-                        <option>187</option>
-                        <option>188</option>
-                        <option>189</option>
-                        <option>190</option>
-                        <option>191</option>
-                        <option>192</option>
-                        <option>193</option>
-                        <option>194</option>
-                        <option>195</option>
-                        <option>196</option>
-                        <option>197</option>
-                        <option>198</option>
-                        <option>199</option>
-                        <option>200</option>
-                        <option>201</option>
-                        <option>202</option>
-                        <option>203</option>
-                        <option>204</option>
-                        <option>205</option>
-                        <option>206</option>
-                        <option>207</option>
-                        <option>208</option>
-                        <option>209</option>
-                        <option>210</option>
-                        <option>211</option>
-                        <option>212</option>
-                        <option>213</option>
-                        <option>214</option>
-                        <option>215</option>
-                        <option>216</option>
-                        <option>217</option>
-                        <option>218</option>
-                        <option>219</option>
-                        <option>220</option>
-                        <option>221</option>
-                        <option>222</option>
-                        <option>223</option>
-                        <option>224</option>
-                        <option>225</option>
-                        <option>226</option>
-                        <option>227</option>
-                        <option>228</option>
-                        <option>229</option>
-                        <option>230</option>
-                        <option>231</option>
-                        <option>232</option>
-                        <option>233</option>
-                        <option>234</option>
-                        <option>235</option>
-                        <option>236</option>
-                        <option>237</option>
-                        <option>238</option>
-                        <option>239</option>
-                        <option>240</option>
-                        <option>241</option>
-                        <option>242</option>
-                        <option>243</option>
-                        <option>244</option>
-                        <option>245</option>
-                        <option>246</option>
-                        <option>247</option>
-                        <option>248</option>
-                        <option>249</option>
-                        <option>250</option>
-                        <option>251</option>
-                        <option>252</option>
-                        <option>253</option>
-                        <option>254</option>
-                        <option>255</option>
-                        <option>256</option>
-                        <option>257</option>
-                        <option>258</option>
-                        <option>259</option>
-                        <option>260</option>
-                        <option>261</option>
-                        <option>262</option>
-                        <option>263</option>
-                        <option>264</option>
-                        <option>265</option>
-                        <option>266</option>
-                        <option>267</option>
-                        <option>268</option>
-                        <option>269</option>
-                        <option>270</option>
-                        <option>271</option>
-                        <option>272</option>
-                        <option>273</option>
-                        <option>274</option>
-                        <option>275</option>
-                        <option>276</option>
-                        <option>277</option>
-                        <option>278</option>
-                        <option>279</option>
-                        <option>280</option>
-                        <option>281</option>
-                        <option>282</option>
-                        <option>283</option>
-                        <option>284</option>
-                        <option>285</option>
-                        <option>286</option>
-                        <option>287</option>
-                        <option>288</option>
-                        <option>289</option>
-                        <option>290</option>
-                        <option>291</option>
-                        <option>292</option>
-                        <option>293</option>
-                        <option>294</option>
-                        <option>295</option>
-                        <option>296</option>
-                        <option>297</option>
-                        <option>298</option>
-                        <option>299</option>
-                        <option>300</option>
-                        <option>301</option>
-                        <option>302</option>
-                        <option>303</option>
-                        <option>304</option>
-                        <option>305</option>
-                        <option>306</option>
-                        <option>307</option>
-                        <option>308</option>
-                        <option>309</option>
-                        <option>310</option>
-                        <option>311</option>
-                        <option>312</option>
-                        <option>313</option>
-                        <option>314</option>
-                        <option>315</option>
-                        <option>316</option>
-                        <option>317</option>
-                        <option>318</option>
-                        <option>319</option>
-                        <option>320</option>
-                        <option>321</option>
-                        <option>322</option>
-                        <option>323</option>
-                        <option>324</option>
-                        <option>325</option>
-                        <option>326</option>
-                        <option>327</option>
-                        <option>328</option>
-                        <option>329</option>
-                        <option>330</option>
-                        <option>331</option>
-                        <option>332</option>
-                        <option>333</option>
-                        <option>334</option>
-                        <option>335</option>
-                        <option>336</option>
-                        <option>337</option>
-                        <option>338</option>
-                        <option>339</option>
-                        <option>340</option>
-                        <option>341</option>
-                        <option>342</option>
-                        <option>343</option>
-                        <option>344</option>
-                        <option>345</option>
-                        <option>346</option>
-                        <option>347</option>
-                        <option>348</option>
-                        <option>349</option>
-                        <option>350</option>
-                        <option>351</option>
-                        <option>352</option>
-                        <option>353</option>
-                        <option>354</option>
-                        <option>355</option>
-                        <option>356</option>
-                        <option>357</option>
-                        <option>358</option>
-                        <option>359</option>
-                        <option>360</option>
-                        <option>361</option>
-                        <option>362</option>
-                        <option>363</option>
-                        <option>364</option>
-                        <option>365</option>
-                        <option>366</option>
-                        <option>367</option>
-                        <option>368</option>
-                        <option>369</option>
-                        <option>370</option>
-                        <option>371</option>
-                        <option>372</option>
-                        <option>373</option>
-                        <option>374</option>
-                        <option>375</option>
-                        <option>376</option>
-                        <option>377</option>
-                        <option>378</option>
-                        <option>379</option>
-                        <option>380</option>
-                        <option>381</option>
-                        <option>382</option>
-                        <option>383</option>
-                        <option>384</option>
-                        <option>385</option>
-                        <option>386</option>
-                        <option>387</option>
-                        <option>388</option>
-                        <option>389</option>
-                        <option>390</option>
-                        <option>391</option>
-                        <option>392</option>
-                        <option>393</option>
-                        <option>394</option>
-                        <option>395</option>
-                        <option>396</option>
-                        <option>397</option>
-                        <option>398</option>
-                        <option>399</option>
-                        <option>400</option>
-                        <option>401</option>
-                        <option>402</option>
-                        <option>403</option>
-                        <option>404</option>
-                        <option>405</option>
-                        <option>406</option>
-                        <option>407</option>
-                        <option>408</option>
-                        <option>409</option>
-                        <option>410</option>
-                        <option>411</option>
-                        <option>412</option>
-                        <option>413</option>
-                        <option>414</option>
-                        <option>415</option>
-                        <option>416</option>
-                        <option>417</option>
-                        <option>418</option>
-                        <option>419</option>
-                        <option>420</option>
-                        <option>421</option>
-                        <option>422</option>
-                        <option>423</option>
-                        <option>424</option>
-                        <option>425</option>
-                        <option>426</option>
-                        <option>427</option>
-                        <option>428</option>
-                        <option>429</option>
-                        <option>430</option>
-                        <option>431</option>
-                        <option>432</option>
-                        <option>433</option>
-                        <option>434</option>
-                        <option>435</option>
-                        <option>436</option>
-                        <option>437</option>
-                        <option>438</option>
-                        <option>439</option>
-                        <option>440</option>
-                        <option>441</option>
-                        <option>442</option>
-                        <option>443</option>
-                        <option>444</option>
-                        <option>445</option>
-                        <option>446</option>
-                        <option>447</option>
-                        <option>448</option>
-                        <option>449</option>
-                        <option>450</option>
-                        <option>451</option>
-                        <option>452</option>
-                        <option>453</option>
-                        <option>454</option>
-                        <option>455</option>
-                        <option>456</option>
-                        <option>457</option>
-                        <option>458</option>
-                        <option>459</option>
-                        <option>460</option>
-                        <option>461</option>
-                        <option>462</option>
-                        <option>463</option>
-                        <option>464</option>
-                        <option>465</option>
-                        <option>466</option>
-                        <option>467</option>
-                        <option>468</option>
-                        <option>469</option>
-                        <option>470</option>
-                        <option>471</option>
-                        <option>472</option>
-                        <option>473</option>
-                        <option>474</option>
-                        <option>475</option>
-                        <option>476</option>
-                        <option>477</option>
-                        <option>478</option>
-                        <option>479</option>
-                        <option>480</option>
-                        <option>481</option>
-                        <option>482</option>
-                        <option>483</option>
-                        <option>484</option>
-                        <option>485</option>
-                        <option>486</option>
-                        <option>487</option>
-                        <option>488</option>
-                        <option>489</option>
-                        <option>490</option>
-                        <option>491</option>
-                        <option>492</option>
-                        <option>493</option>
-                        <option>494</option>
-                        <option>495</option>
-                        <option>496</option>
-                        <option>497</option>
-                        <option>498</option>
-                        <option>499</option>
-                        <option>500</option>
-                    </select> -->
-                </div>
-                <div class="col-md-3">
-                    <label for="">Pairs</label>
-                    <br>
-                    <input type="text" name="pairs" id="pairs" class="form-control inp">
-                    <br>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <input type="radio" name="radio" value="Timber Market" onclick="check2()" required> <label for="">Timber Market</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="radio" name="radio" value="DELUX Shoes" onclick="check2()" required> <label for="">DELUX Shoes</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="radio" name="radio" value="Factory Stock" onclick="check2()" required> <label for="">Factory Stock</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="radio" name="radio" value="Samples" onclick="check2()" required> <label for="">Samples</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="radio" name="radio" value="other" onclick="check()" id="other" required> <label for="">Other</label>
-                    <br>
-                    <input type="text" name="other-text"id="other-text" class="form-control">
-                </div>
-                <div class="col-md-5 d-flex align-items-center justify-content-end">
-                    <input type="submit" value="Submit" class="sub btn btn-success">
-                </div>
-            </div>
-        </form>
-    </div>
-    
-    <script>
+                        }
 
-        function check()
-        {
-            if (document.getElementById("other").checked == true)
-            {
-                document.getElementById("other-text").disabled = false;
-            }
+                    echo"
+                    </select>
+                    <input type='submit' value='Get Details' class='btn btn-success ms-2'>
+                </div>
+                </form>";
+                }
+              ?>
+        </div>
+        
+        <?php
+        
+        error_reporting(E_ERROR | E_PARSE | E_NOTICE);
+        
+        if (empty($_GET)) {
             
         }
-        function check2()
-        {
-            document.getElementById("other-text").disabled = true;
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-</body>
-</html>
+        else {
+            $article_name = $_GET['view-profile'];
+            $stmt = "SELECT * FROM data WHERE article_name='$article_name'";
+            $result = $conn->query($stmt);
+            $row = $result->fetch_assoc();
+            $category = $row["category"];
+            $market = $row["market_name"];
+            
+            echo "
+            <div class='row px-5 mt-3 align-items-center justify-content-between'>
+                <div class='col-md-4 bg-light bg-opacity-50 rounded-4 text-center text-dark'>
+                    <h5>Article ID:</h5>
+                    <h4 class='text-primary-emphasis bg-light rounded-3'>" . $_GET['view-profile'] . "</h4> 
+                </div>
+                <div class='col-md-1 bg-light bg-opacity-50 rounded-4 text-center text-dark'>
+                    <h5>Size:<h4>
+                    <h4 class='text-primary-emphasis bg-light rounded-3'>". $_GET['select-size'] .  "</h4>
+                </div>
+                <div class='col-md-2 bg-light bg-opacity-50 rounded-4 text-center text-dark'>
+                    <h5>Category:<h4>
+                    <h4 class='text-primary-emphasis bg-light rounded-3'>$category</h4>
+                </div>
+                <div class='col-md-4 bg-light bg-opacity-50 rounded-4 text-center text-dark'>
+                    <h5>Article Name:<h4>
+                    <h4 class='text-primary-emphasis bg-light rounded-3'>$market</h4>
+                </div>";
+                echo"
+            </div>
+                <div class='row px-5 mt-3'>
+                    <div class='col-md-2'>
+                        <table class='table  text-center table-light'>
+                            <tbody>
+                                <th scope='row' class='bg-light opacity-50' colspan='2'>Size</th>";
+                                
+                                $stmt = "SELECT size FROM data WHERE article_name='$article_name'";
+                                $result = $conn->query($stmt);
+                                
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<tr><td>" . $row['size']. "</td><td class='px-0'><button class='btn btn-danger'>Delete</button></td></tr>";
+                                    }
+                                }
+
+                        echo "
+                        <tr><td colspan='2'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Size'>
+                            Add Size
+                        </button></td></tr>
+                        </tbody>
+                        </table>";
+                        echo "
+                        <!-- Modal -->
+                        <div class='modal fade text-dark' id='Add-Size' tabindex='-1' aria-labelledby='Add-Size' aria-hidden='true'>
+                            <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                <div class='modal-content'>
+                                    <div class='modal-header'>
+                                        <h5 class='modal-title' id='Add-Size'>Add Size</h5>
+                                        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                        </button>
+                                    </div>
+                                    <form action='./includes/add-size.inc.php' method='post'>
+                                    <div class='modal-body'>
+                                        <input type='hidden' name='article_name' value='$article_name'>
+                                        <input type='hidden' name='category' value='$category'>
+                                        <input type='hidden' name='market_name' value='$market'>
+                                        <input type='text' name='add-size' class='form-control' placeholder='Size...'>
+                                    </div>
+                                    <div class='modal-footer'>
+                                        <input type='submit' class='btn btn-primary' value='Add'>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>";
+                            }
+                    if ($_GET['select-size'] != '') {
+                        # code...
+                    echo"
+
+                    <div class='col-md-4 h-25'>
+                        <table class='table table-light text-center table-striped table-bordered border-dark-subtle table-responsive-md align-baseline'>
+                            <tbody>
+                                <tr class='bg-light opacity-50'><th>Sr.</th><th>Process / Labour</th><th>Rate</th><th></th></tr>";
+                                $size = $_GET['select-size'];
+                                $stmt = "SELECT * FROM article_process WHERE article_name='$article_name' AND size = '$size'";
+                                $result = $conn->query($stmt);
+
+                                $i=1;
+                                
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<tr id='process-". $i ."'><td>".$i."</td><td id='process-name-". $i ."' class='fs-5 text-start'>" . $row['processes']. "</td><td id='process-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['process_rate'] ."</td><td id='process-id-". $i ."' class='px-0'><button type='button' id='edit-pro-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Process'>
+                                            Edit    
+                                        </button><p class='d-none' id='process-bd-". $i ."'>" . $row['breakdown'] ."</p></td></tr>";
+                                        $i++;
+                                    }
+                                }
+                            echo"
+                            <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Process'>
+                                Add Process
+                            </button></td></tr>
+                            </tbody>
+                        </table>";
+                            echo "
+
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Edit-Process' tabindex='-1' aria-labelledby='Edit-Process' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Edit-Process'>Edit Process</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/edit-art-process.inc.php' method='post' id='editPro'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <h6>Process</h6>
+                                            <input type='text' name='edit-art-process' id='edit-art-process' class='form-control' disabled'>
+                                            <h6>Rate</h6>
+                                            <input type='text' name='edit-art-process-rate' id='edit-art-process-rate' class='form-control'>
+                                            <h6>Breakdown</h6>
+                                            <input type='text' name='edit-art-process-bd' id='edit-art-process-bd' class='form-control'>
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Edit'>
+                                        </form>
+                                        <form action='includes/del-art-process.inc.php' method='post'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='hidden' name='del-pro' id='delPro'>
+                                            <button type='submit' class='btn btn-danger' value=''>Delete</button>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>";
+
+                            echo"
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Process' tabindex='-1' aria-labelledby='Add-Process' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Process</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-process.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <h6>Process</h6>
+                                            <input type='text' name='add-art-process' class='form-select' id='add-pro' placeholder='Process' list='processes'>";
+                                            echo'
+                                            <datalist id="processes">';
+                                            $stmt = "SELECT * FROM processes";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['process'] . "'>" . $row['process'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                            <h6>Rate</h6>
+                                            <input type='text' name='add-pro-rate' class='form-control' id='add-pro-rate' value='0'>
+                                            <h6>Breakdown</h6>
+                                            <input type='text' name='add-pro-bd' class='form-control' id='add-pro-bd' placeholder=''>
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                            
+                    <div class='col-md-3'>
+                        <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                            <tbody>
+                                <tr class='bg-light opacity-50'>
+                                <th>Sr.</th>
+                                <th>Cutting Dept.</th>
+                                <th>Rate</th>
+                                <th></th>
+                                </tr>";
+                                $size = $_GET['select-size'];
+                                $stmt = "SELECT * FROM article_material1 WHERE article_name='$article_name' AND size = '$size'";
+                                $result = $conn->query($stmt);
+
+                                $i=1;
+                                
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<tr id='material1-". $i ."'><td>".$i."</td><td id='material1-name-". $i ."'>" . $row['materials']. "</td><td id='material1-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['rate'] ."</td><td id='material1-id-". $i ."' class='px-0'><button type='button' id='edit-mat1-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material1'>
+                                            Edit    
+                                        </button><p class='d-none' id='material1-bd-". $i ."'>" . $row['breakdown'] ."</p></td></tr>";
+                                        $i++;
+                                    }
+                                }
+                            echo"
+                            <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-1'>
+                                Add Material
+                            </button></td></tr>
+                            </tbody>
+                            </table>";
+
+                                echo "
+
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Edit-Material1' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Edit-Process'>Edit Material 1</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/edit-art-material.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='hidden' name='material' value='material1'>
+                                            <h6>Material</h6>
+                                            <input type='text' name='edit-art-material' id='edit-art-material1' class='form-control' disabled'>
+                                            <h6>Rate</h6>
+                                            <input type='text' name='edit-art-material-rate' id='edit-art-material1-rate' class='form-control'>
+                                            <h6>Breakdown</h6>
+                                            <input type='text' name='edit-art-material-bd' id='edit-art-material1-bd' class='form-control'>
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Edit'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>";
+
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-1' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 1</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material1.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material1' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                            <h6>Rate</h6>
+                                            <input type='text' name='add-mat-rate' class='form-control' id='add-pro-rate' value='0'>
+                                            <h6>Breakdown</h6>
+                                            <input type='text' name='add-mat-bd' class='form-control' id='add-pro-bd' placeholder=''>
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class='col-md-3'>
+                        <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                            <tbody>
+                                <tr class='bg-light opacity-50'>
+                                <th>Sr.</th>
+                                <th>Stitching Dept.</th>
+                                <th>Rate</th>
+                                <th></th>
+                                </tr>";
+                                $size = $_GET['select-size'];
+                                $stmt = "SELECT * FROM article_material2 WHERE article_name='$article_name' AND size = '$size'";
+                                $result = $conn->query($stmt);
+                                $i = 1;
+                                
+                                if ($result->num_rows > 0) {
+                                    // output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material2'>
+                                            Edit
+                                        </button></td></tr>";
+                                        $i++;
+                                    }
+                                }
+                            echo"
+                            <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-2'>
+                                Add Material
+                            </button></td></tr>
+                            </tbody>
+                            </table>";
+
+                                echo "
+
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Edit-Material2' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Edit-Process'>Edit Material 2</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/edit-art-process.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <select name='edit-material2' id='edit-mat2' class='form-select'>";
+                                            $stmt = "SELECT * FROM article_material2 WHERE article_name='$article_name' AND size = '$size'";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['materials'] . "'>" . $row['materials'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </select>';
+                                            echo"
+
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Edit'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>";
+
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-2' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 2</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material2.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='row px-5'>
+                <div class='col-md-3'>
+                <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                    <tbody>
+                        <tr class='bg-light opacity-50'>
+                        <th>Sr.</th>
+                        <th>Packing Dept.</th>
+                        <th>Rate</th>
+                        <th></th>
+                        </tr>";
+                        $size = $_GET['select-size'];
+                        $stmt = "SELECT * FROM article_material3 WHERE article_name='$article_name' AND size = '$size'";
+                        $result = $conn->query($stmt);
+                        $i = 1;
+                        
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material3'>
+                                    Edit
+                                </button></td></tr>";
+                                $i++;
+                            }
+                        }
+                    echo"
+                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-3'>
+                        Add Material
+                    </button></td></tr>
+                    </tbody>
+                    </table>";
+
+                        echo "
+
+                    <!-- Modal -->
+                    <div class='modal fade text-dark' id='Edit-Material3' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                        <div class='modal-dialog modal-dialog-centered modal-sm'>
+                            <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='Edit-Process'>Edit Material 3</h5>
+                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                    </button>
+                                </div>
+                                <form action='./includes/edit-art-process.inc.php' method='post'>
+                                <div class='modal-body'>
+                                    <input type='hidden' name='article_name' value='$article_name'>
+                                    <input type='hidden' name='category' value='$category'>
+                                    <input type='hidden' name='size' value='$size'>
+                                    <select name='edit-material3' id='edit-mat3' class='form-select'>";
+                                    $stmt = "SELECT * FROM article_material3 WHERE article_name='$article_name' AND size = '$size'";
+                                    $result = $conn->query($stmt);
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // output data of each row
+                                        while($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row['materials'] . "'>" . $row['materials'] . "</option>";
+                                        }
+                                    } 
+                                    echo'
+                                    </select>';
+                                    echo"
+
+                                </div>
+                                <div class='modal-footer'>
+                                    <input type='submit' class='btn btn-primary' value='Edit'>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>";
+
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-3' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 3</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material3.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='col-md-3'>
+                    <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                    <tbody>
+                        <tr class='bg-light opacity-50'>
+                        <th>Sr.</th>
+                        <th>Overhead</th>
+                        <th>Rate</th>
+                        <th></th>
+                        </tr>";
+                        $size = $_GET['select-size'];
+                        $stmt = "SELECT * FROM article_material4 WHERE article_name='$article_name' AND size = '$size'";
+                        $result = $conn->query($stmt);
+                        $i = 1;
+                        
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material4'>
+                                    Edit
+                                </button></td></tr>";
+                                $i++;
+                            }
+                        }
+                    echo"
+                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-4'>
+                        Add Material
+                    </button></td></tr>
+                    </tbody>
+                    </table>";
+
+                        echo "
+
+                    <!-- Modal -->
+                    <div class='modal fade text-dark' id='Edit-Material4' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                        <div class='modal-dialog modal-dialog-centered modal-sm'>
+                            <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='Edit-Process'>Edit Material 4</h5>
+                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                    </button>
+                                </div>
+                                <form action='./includes/edit-art-process.inc.php' method='post'>
+                                <div class='modal-body'>
+                                    <input type='hidden' name='article_name' value='$article_name'>
+                                    <input type='hidden' name='category' value='$category'>
+                                    <input type='hidden' name='size' value='$size'>
+                                    <select name='edit-material4' id='edit-mat4' class='form-select'>";
+                                    $stmt = "SELECT * FROM article_material4 WHERE article_name='$article_name' AND size = '$size'";
+                                    $result = $conn->query($stmt);
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // output data of each row
+                                        while($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row['materials'] . "'>" . $row['materials'] . "</option>";
+                                        }
+                                    } 
+                                    echo'
+                                    </select>';
+                                    echo"
+
+                                </div>
+                                <div class='modal-footer'>
+                                    <input type='submit' class='btn btn-primary' value='Edit'>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>";
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-4' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 4</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material4.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='col-md-3'>
+                    <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                    <tbody>
+                        <tr class='bg-light opacity-50'>
+                        <th>Sr.</th>
+                        <th>PU & Lasting</th>
+                        <th>Rate</th>
+                        <th></th>
+                        </tr>";
+                        $size = $_GET['select-size'];
+                        $stmt = "SELECT * FROM article_material5 WHERE article_name='$article_name' AND size = '$size'";
+                        $result = $conn->query($stmt);
+                        $i = 1;
+                        
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material5'>
+                                    Edit
+                                </button></td></tr>";
+                                $i++;
+                            }
+                        }
+                    echo"
+                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-5'>
+                        Add Material
+                    </button></td></tr>
+                    </tbody>
+                    </table>";
+
+                        echo "
+
+                    <!-- Modal -->
+                    <div class='modal fade text-dark' id='Edit-Material5' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                        <div class='modal-dialog modal-dialog-centered modal-sm'>
+                            <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='Edit-Process'>Edit Material 5</h5>
+                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                    </button>
+                                </div>
+                                <form action='./includes/edit-art-process.inc.php' method='post'>
+                                <div class='modal-body'>
+                                    <input type='hidden' name='article_name' value='$article_name'>
+                                    <input type='hidden' name='category' value='$category'>
+                                    <input type='hidden' name='size' value='$size'>
+                                    <select name='edit-material5' id='edit-mat5' class='form-select'>";
+                                    $stmt = "SELECT * FROM article_material5 WHERE article_name='$article_name' AND size = '$size'";
+                                    $result = $conn->query($stmt);
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // output data of each row
+                                        while($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row['materials'] . "'>" . $row['materials'] . "</option>";
+                                        }
+                                    } 
+                                    echo'
+                                    </select>';
+                                    echo"
+
+                                </div>
+                                <div class='modal-footer'>
+                                    <input type='submit' class='btn btn-primary' value='Edit'>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>";
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-5' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 5</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material5.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='col-md-3'>
+                    <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
+                    <tbody>
+                        <tr class='bg-light opacity-50'>
+                        <th>Sr.</th>
+                        <th>Special</th>
+                        <th>Rate</th>
+                        <th></th>
+                        </tr>";
+                        $size = $_GET['select-size'];
+                        $stmt = "SELECT * FROM article_material6 WHERE article_name='$article_name' AND size = '$size'";
+                        $result = $conn->query($stmt);
+                        $i = 1;
+                        
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material6'>
+                                    Edit
+                                </button></td></tr>";
+                                $i++;
+                            }
+                        }
+                    echo"
+                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-6'>
+                        Add Material
+                    </button></td></tr>
+                    </tbody>
+                    </table>";
+
+                        echo "
+
+                    <!-- Modal -->
+                    <div class='modal fade text-dark' id='Edit-Material6' tabindex='-1' aria-labelledby='Edit-Material' aria-hidden='true'>
+                        <div class='modal-dialog modal-dialog-centered modal-sm'>
+                            <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='Edit-Process'>Edit Material 6</h5>
+                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                    </button>
+                                </div>
+                                <form action='./includes/edit-art-process.inc.php' method='post'>
+                                <div class='modal-body'>
+                                    <input type='hidden' name='article_name' value='$article_name'>
+                                    <input type='hidden' name='category' value='$category'>
+                                    <input type='hidden' name='size' value='$size'>
+                                    <select name='edit-material6' id='edit-mat6' class='form-select'>";
+                                    $stmt = "SELECT * FROM article_material6 WHERE article_name='$article_name' AND size = '$size'";
+                                    $result = $conn->query($stmt);
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // output data of each row
+                                        while($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row['materials'] . "'>" . $row['materials'] . "</option>";
+                                        }
+                                    } 
+                                    echo'
+                                    </select>';
+                                    echo"
+
+                                </div>
+                                <div class='modal-footer'>
+                                    <input type='submit' class='btn btn-primary' value='Edit'>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>";
+                            echo "
+                            <!-- Modal -->
+                            <div class='modal fade text-dark' id='Add-Material-6' tabindex='-1' aria-labelledby='Add-Material' aria-hidden='true'>
+                                <div class='modal-dialog modal-dialog-centered modal-sm'>
+                                    <div class='modal-content'>
+                                        <div class='modal-header'>
+                                            <h5 class='modal-title' id='Add-Process'>Add Material 6</h5>
+                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'>
+                                            </button>
+                                        </div>
+                                        <form action='./includes/add-art-material6.inc.php' method='post'>
+                                        <div class='modal-body'>
+                                            <input type='hidden' name='article_name' value='$article_name'>
+                                            <input type='hidden' name='category' value='$category'>
+                                            <input type='hidden' name='size' value='$size'>
+                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            echo'
+                                            <datalist id="materials">';
+                                            $stmt = "SELECT * FROM materials";
+                                            $result = $conn->query($stmt);
+                                            
+                                            if ($result->num_rows > 0) {
+                                                // output data of each row
+                                                while($row = $result->fetch_assoc()) {
+                                                    echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
+                                                }
+                                            } 
+                                            echo'
+                                            </datalist>';
+                                            echo"
+                                        </div>
+                                        <div class='modal-footer'>
+                                            <input type='submit' class='btn btn-primary' value='Add'>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                ";
+            }
+            ?>
+            
+            
+            
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <script>
+
+            const buttons = document.getElementsByTagName("button");
+            var btn;
+            const buttonPressed = e => {
+            console.log(e.target.id);  // Get ID of Clicked Element
+            var btn = e.target.id;
+            //process edit
+            if (btn.includes('edit-pro')) {
+
+                let val = btn.slice(9);
+                var proNameId = "process-name-"+ val;
+                var proRateId = "process-rate-"+ val;
+                var proBdId = "process-bd-"+ val;
+                console.log(val);
+
+                var proNameEdit = document.querySelector("#edit-art-process");
+                var proNameDel = document.querySelector("#DelPro");
+                var proName = document.querySelector("#"+proNameId);
+                proNameEdit.setAttribute("value", proName.innerText);
+
+                var proRateEdit = document.querySelector("#edit-art-process-rate");
+                var proRate = document.querySelector("#"+proRateId);
+                proRateEdit.setAttribute("value", proRate.innerText);
+
+                var proBdEdit = document.querySelector("#edit-art-process-bd")
+                var proBd = document.querySelector("#"+proBdId);
+                proBdEdit.setAttribute("value", proBd.innerText);
+                console.log(proBd);
+            }
+            //material1 edit
+            else if (btn.includes('edit-mat1')) {
+                let val = btn.slice(10);
+                var mat1NameId = "material1-name-"+ val;
+                var mat1RateId = "material1-rate-"+ val;
+                var mat1BdId = "material1-bd-"+ val;
+                console.log(val);
+
+                var mat1NameEdit = document.querySelector("#edit-art-material1");
+                var mat1Name = document.querySelector("#"+mat1NameId);
+                mat1NameEdit.setAttribute("value", mat1Name.innerText);
+
+                var mat1RateEdit = document.querySelector("#edit-art-material1-rate");
+                var mat1Rate = document.querySelector("#"+mat1RateId);
+                mat1RateEdit.setAttribute("value", mat1Rate.innerText);
+
+                var mat1BdEdit = document.querySelector("#edit-art-material1-bd")
+                var mat1Bd = document.querySelector("#"+mat1BdId);
+                mat1BdEdit.setAttribute("value", mat1Bd.innerText);
+                console.log(proBd);
+            }
+            }
+
+            for (let button of buttons) {
+            button.addEventListener("click", buttonPressed);
+            }
+
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+            function confirmation(delName){
+            var del=confirm("Are you sure you want to delete this record?\n"+delName);
+            if (del==true){
+                window.location.href="./includes/delete-process.inc.php?processToDel="+delName;
+            }
+            return del;
+        }            
+
+
+        </script>
+        
+
+    </body>
+    </html>
