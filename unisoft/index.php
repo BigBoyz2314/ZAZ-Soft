@@ -18,8 +18,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link rel="stylesheet" href="assests/styles.css">
     <title>Article Profile</title>
-    <style>
-    </style>
 </head>
 
 <body class="bg-dark text-warning">
@@ -162,7 +160,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 </div>";
                 echo"
             </div>
-                <div class='row px-5 mt-3'>
+                <div class='row justify-content-center mt-3'>
                     <div class='col-md-2'>
                         <table class='table  text-center table-light'>
                             <tbody>
@@ -227,7 +225,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                 if ($result->num_rows > 0) {
                                     // output data of each row
                                     while($row = $result->fetch_assoc()) {
-                                        echo "<tr id='process-". $i ."'><td>".$i."</td><td id='process-name-". $i ."' class='fs-5 text-start'>" . $row['processes']. "</td><td id='process-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['process_rate'] ."</td><td id='process-id-". $i ."' class='px-0'><button type='button' id='edit-pro-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Process'>
+                                        echo "<tr id='process-". $i ."'><td>".$i."</td><td id='process-name-". $i ."' class='text-start'>" . $row['processes']. "</td><td id='process-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['process_rate'] ."</td><td id='process-id-". $i ."' class='px-0'><button type='button' id='edit-pro-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Process'>
                                             Edit    
                                         </button><p class='d-none' id='process-bd-". $i ."'>" . $row['breakdown'] ."</p></td></tr>";
                                         $i++;
@@ -269,8 +267,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <input type='hidden' name='article_name' value='$article_name'>
                                             <input type='hidden' name='category' value='$category'>
                                             <input type='hidden' name='size' value='$size'>
-                                            <input type='hidden' name='del-pro' id='delPro'>
-                                            <button type='submit' class='btn btn-danger' value=''>Delete</button>
+                                            <input type='hidden' name='del-pro' id='delPro' value='$process'>
+                                            <button type='submit' class='btn btn-danger'>Delete</button>
                                         </form>
                                         </div>
                                     </div>
@@ -324,12 +322,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             
                         </div>
                             
-                    <div class='col-md-3'>
+                    <div class='col-md-4'>
                         <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                             <tbody>
                                 <tr class='bg-light opacity-50'>
                                 <th>Sr.</th>
                                 <th>Cutting Dept.</th>
+                                <th>Qty.</th>
                                 <th>Rate</th>
                                 <th></th>
                                 </tr>";
@@ -342,14 +341,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                 if ($result->num_rows > 0) {
                                     // output data of each row
                                     while($row = $result->fetch_assoc()) {
-                                        echo "<tr id='material1-". $i ."'><td>".$i."</td><td id='material1-name-". $i ."'>" . $row['materials']. "</td><td id='material1-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['rate'] ."</td><td id='material1-id-". $i ."' class='px-0'><button type='button' id='edit-mat1-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material1'>
+                                        echo "<tr id='material1-". $i ."'><td>".$i."</td><td id='material1-name-". $i ."'>" . $row['materials']. "</td><td id='material1-qty-". $i ."'>" . $row['qty']. "</td><td id='material1-rate-". $i ."' data-bs-toggle='tooltip' data-bs-custom-class='fs-6' data-bs-placement='top' title='" . $row['breakdown'] . "'>". $row['rate'] ."</td><td id='material1-id-". $i ."' class='px-0'><button type='button' id='edit-mat1-". $i ."' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material1'>
                                             Edit    
                                         </button><p class='d-none' id='material1-bd-". $i ."'>" . $row['breakdown'] ."</p></td></tr>";
                                         $i++;
                                     }
                                 }
                             echo"
-                            <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-1'>
+                            <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-1'>
                                 Add Material
                             </button></td></tr>
                             </tbody>
@@ -402,7 +401,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <input type='hidden' name='article_name' value='$article_name'>
                                             <input type='hidden' name='category' value='$category'>
                                             <input type='hidden' name='size' value='$size'>
-                                            <input type='text' name='add-art-material1' class='form-select' placeholder='Material' list='materials'>";
+                                            <input type='text' name='add-art-material1' class='form-select' id='mat1' placeholder='Material' list='materials'>";
                                             echo'
                                             <datalist id="materials">';
                                             $stmt = "SELECT * FROM materials";
@@ -414,11 +413,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                                     echo "<option value='" . $row['material'] . "'>" . $row['material'] . "</option>";
                                                 }
                                             } 
+
                                             echo'
                                             </datalist>';
                                             echo"
+                                            <h6>Quantity</h6>
+                                            <input type='text' name='add-mat-qty' class='form-control' id='add-mat1-qty' value='1'>
                                             <h6>Rate</h6>
-                                            <input type='text' name='add-mat-rate' class='form-control' id='add-pro-rate' value='0'>
+                                            <input type='text' name='show-mat-rate' class='form-control' id='show-mat1-rate' value='0' disabled>
+                                            <input type='text' name='add-mat-rate' class='form-control' id='add-mat1-rate' value='0' hidden>
                                             <h6>Breakdown</h6>
                                             <input type='text' name='add-mat-bd' class='form-control' id='add-pro-bd' placeholder=''>
                                         </div>
@@ -432,13 +435,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </tbody>
                         </table>
                     </div>
-                    
-                    <div class='col-md-3'>
+                </div>
+                <div class='row justify-content-center'>
+                    <div class='col-md-4'>
                         <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                             <tbody>
                                 <tr class='bg-light opacity-50'>
                                 <th>Sr.</th>
                                 <th>Stitching Dept.</th>
+                                <th>Qty.</th>
                                 <th>Rate</th>
                                 <th></th>
                                 </tr>";
@@ -450,14 +455,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                 if ($result->num_rows > 0) {
                                     // output data of each row
                                     while($row = $result->fetch_assoc()) {
-                                        echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material2'>
+                                        echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>" . $row['qty']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material2'>
                                             Edit
                                         </button></td></tr>";
                                         $i++;
                                     }
                                 }
                             echo"
-                            <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-2'>
+                            <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-2'>
                                 Add Material
                             </button></td></tr>
                             </tbody>
@@ -517,7 +522,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             <input type='hidden' name='article_name' value='$article_name'>
                                             <input type='hidden' name='category' value='$category'>
                                             <input type='hidden' name='size' value='$size'>
-                                            <input type='text' name='add-art-material' class='form-select' placeholder='Material' list='materials'>";
+                                            <input type='text' name='add-art-material' class='form-select' id='mat2' placeholder='Material' list='materials'>";
                                             echo'
                                             <datalist id="materials">';
                                             $stmt = "SELECT * FROM materials";
@@ -532,6 +537,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             echo'
                                             </datalist>';
                                             echo"
+                                            <h6>Quantity</h6>
+                                            <input type='text' name='add-mat-qty' class='form-control' id='add-mat2-qty' value='1'>
+                                            <h6>Rate</h6>
+                                            <input type='text' name='show-mat-rate' class='form-control' id='show-mat2-rate' value='0' disabled>
+                                            <input type='text' name='add-mat-rate' class='form-control' id='add-mat2-rate' value='0' hidden>
+                                            <h6>Breakdown</h6>
+                                            <input type='text' name='add-mat-bd' class='form-control' id='add-pro-bd' placeholder=''>
                                         </div>
                                         <div class='modal-footer'>
                                             <input type='submit' class='btn btn-primary' value='Add'>
@@ -543,14 +555,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class='row px-5'>
-                <div class='col-md-3'>
+                <div class='col-md-4'>
                 <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                     <tbody>
                         <tr class='bg-light opacity-50'>
                         <th>Sr.</th>
                         <th>Packing Dept.</th>
+                        <th>Qty.</th>
                         <th>Rate</th>
                         <th></th>
                         </tr>";
@@ -562,14 +573,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
-                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material3'>
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>" . $row['qty']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material3'>
                                     Edit
                                 </button></td></tr>";
                                 $i++;
                             }
                         }
                     echo"
-                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-3'>
+                    <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-3'>
                         Add Material
                     </button></td></tr>
                     </tbody>
@@ -655,12 +666,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </tbody>
                         </table>
                     </div>
-                    <div class='col-md-3'>
+                    <div class='col-md-4'>
                     <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                     <tbody>
                         <tr class='bg-light opacity-50'>
                         <th>Sr.</th>
                         <th>Overhead</th>
+                        <th>Qty.</th>
                         <th>Rate</th>
                         <th></th>
                         </tr>";
@@ -672,14 +684,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
-                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material4'>
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>" . $row['qty']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material4'>
                                     Edit
                                 </button></td></tr>";
                                 $i++;
                             }
                         }
                     echo"
-                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-4'>
+                    <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-4'>
                         Add Material
                     </button></td></tr>
                     </tbody>
@@ -764,12 +776,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </tbody>
                         </table>
                     </div>
-                    <div class='col-md-3'>
+                    <div class='col-md-4'>
                     <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                     <tbody>
                         <tr class='bg-light opacity-50'>
                         <th>Sr.</th>
                         <th>PU & Lasting</th>
+                        <th>Qty.</th>
                         <th>Rate</th>
                         <th></th>
                         </tr>";
@@ -781,14 +794,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
-                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material5'>
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>" . $row['qty']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material5'>
                                     Edit
                                 </button></td></tr>";
                                 $i++;
                             }
                         }
                     echo"
-                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-5'>
+                    <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-5'>
                         Add Material
                     </button></td></tr>
                     </tbody>
@@ -873,12 +886,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                             </tbody>
                         </table>
                     </div>
-                    <div class='col-md-3'>
+                    <div class='col-md-4'>
                     <table class='table table-light text-center table-striped table-bordered border-dark-subtle'>
                     <tbody>
                         <tr class='bg-light opacity-50'>
                         <th>Sr.</th>
                         <th>Special</th>
+                        <th>Qty.</th>
                         <th>Rate</th>
                         <th></th>
                         </tr>";
@@ -890,14 +904,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         if ($result->num_rows > 0) {
                             // output data of each row
                             while($row = $result->fetch_assoc()) {
-                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material6'>
+                                echo "<tr><td>$i</td><td>" . $row['materials']. "</td><td>" . $row['qty']. "</td><td>". $row['rate'] ."</td><td class='px-0'><button type='button' class='btn btn-warning fs-6' data-bs-toggle='modal' data-bs-target='#Edit-Material6'>
                                     Edit
                                 </button></td></tr>";
                                 $i++;
                             }
                         }
                     echo"
-                    <tr><td colspan='4'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-6'>
+                    <tr><td colspan='5'><button type='button' class='btn btn-primary w-100 fs-6' data-bs-toggle='modal' data-bs-target='#Add-Material-6'>
                         Add Material
                     </button></td></tr>
                     </tbody>
@@ -987,8 +1001,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             }
             ?>
             
-            
-            
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
         <script>
@@ -1057,7 +1069,57 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 window.location.href="./includes/delete-process.inc.php?processToDel="+delName;
             }
             return del;
-        }            
+            }  
+            
+            $(document).ready(function(){
+                // Material 1 data
+                $("#mat1").change(function(e){
+                    $mat = $("#mat1").val();
+                    $.ajax({    
+                        type: "POST",
+                        url: "includes/get-mat-info.inc.php",
+                        data: {
+                            "mat" : $mat 
+                        },       
+                        dataType: "html",                  
+                        success: function(data){                    
+                            $("#add-mat1-rate").val(data);
+                            $("#show-mat1-rate").val(data);
+                                $("#add-mat1-qty").change(function(e){
+                                $qty = $("#add-mat1-qty").val();
+                                $newrate = $qty * data;
+                                $("#add-mat1-rate").val($newrate);
+                                $("#show-mat1-rate").val($newrate);
+                            });
+                        }
+                    });
+                });
+
+                // Material 2 data
+                $("#mat2").change(function(e){
+                    $mat = $("#mat2").val();
+                    $.ajax({    
+                        type: "POST",
+                        url: "includes/get-mat-info.inc.php",
+                        data: {
+                            "mat" : $mat 
+                        },       
+                        dataType: "html",                  
+                        success: function(data){                    
+                            $("#add-mat2-rate").val(data);
+                            $("#show-mat2-rate").val(data);
+                                $("#add-mat2-qty").change(function(e){
+                                $qty = $("#add-mat2-qty").val();
+                                $newrate = $qty * data;
+                                $("#add-mat2-rate").val($newrate);
+                                $("#show-mat2-rate").val($newrate);
+                            });
+                        }
+                    });
+                });
+
+                
+            });
 
 
         </script>
