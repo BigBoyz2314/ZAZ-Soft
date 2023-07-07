@@ -5,10 +5,11 @@
 <?php
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $materials = $_REQUEST["add-art-material1"];
+        $material = $_REQUEST["add-art-material1"];
         $article_name = $_REQUEST["article_name"];
         $category = $_REQUEST["category"];
         $size = $_REQUEST["size"];
+        $qty = $_REQUEST["add-mat-qty"];
         $rate = $_REQUEST["add-mat-rate"];
         $bd = $_REQUEST["add-mat-bd"];
     }
@@ -20,11 +21,11 @@
     }
     else {
 
-     $sql ="INSERT INTO article_material1 VALUES ('', '$article_name', '$size','$category','$materials','$rate','$bd')";
+     $sql ="INSERT INTO article_material1 VALUES ('', '$article_name', '$size','$category','$material','','$rate','$bd','$qty')";
         
         if(mysqli_query($conn, $sql)){
             echo $category;
-            header('Location: ../article-profile.php?view-profile='.$article_name.'+&select-size='.$size.'');
+            header('Location: ../index.php?view-profile='.$article_name.'+&select-size='.$size.'');
         } else{
             echo "ERROR: Hush! Sorry $sql. "
             . mysqli_error($conn);
