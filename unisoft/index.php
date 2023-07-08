@@ -417,9 +417,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                             echo'
                                             </datalist>';
                                             echo"
+                                            <h6>Measure</h6>
+                                            <input type='text' name='add-mat-m' class='form-control' id='add-mat1-m' value='' hidden>
+                                            <input type='text' name='show-mat-m' class='form-control' id='show-mat1-m' value='' disabled>
+                                            <h6>Amount by Measure</h6>
+                                            <input type='number' name='add-mat-a-m' class='form-control' id='add-mat1-a-m' value='1'>
                                             <h6>Quantity</h6>
                                             <input type='text' name='add-mat-qty' class='form-control' id='add-mat1-qty' value='1'>
-                                            <h6>Rate</h6>
+                                            <h6>Rate Per Pair</h6>
                                             <input type='text' name='show-mat-rate' class='form-control' id='show-mat1-rate' value='0' disabled>
                                             <input type='text' name='add-mat-rate' class='form-control' id='add-mat1-rate' value='0' hidden>
                                             <h6>Breakdown</h6>
@@ -1073,24 +1078,75 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             
             $(document).ready(function(){
                 // Material 1 data
+
+                // $("#mat1").change(function(e){
+                //     $mat = $("#mat1").val();
+                //     $.ajax({    
+                //         type: "POST",
+                //         url: "includes/get-mat-info.inc.php",
+                //         data: {
+                //             "mat" : $mat 
+                //         },       
+                //         dataType: "html",                  
+                //         success: function(data){                    
+                //             $("#add-mat1-rate").val(data);
+                //             $("#show-mat1-rate").val(data);
+                            
+                //             $("#add-mat1-qty").change(function(e){
+                //                 $qty = $("#add-mat1-qty").val();
+                //                 $newrate = $qty * data;
+                //                 $("#add-mat1-rate").val($newrate);
+                //                 $("#show-mat1-rate").val($newrate);
+                //             });
+                //         }
+                //     });
+                // });
+
                 $("#mat1").change(function(e){
                     $mat = $("#mat1").val();
                     $.ajax({    
                         type: "POST",
-                        url: "includes/get-mat-info.inc.php",
+                        url: "includes/get-mat-m.inc.php",
                         data: {
                             "mat" : $mat 
                         },       
                         dataType: "html",                  
                         success: function(data){                    
-                            $("#add-mat1-rate").val(data);
-                            $("#show-mat1-rate").val(data);
-                                $("#add-mat1-qty").change(function(e){
-                                $qty = $("#add-mat1-qty").val();
-                                $newrate = $qty * data;
-                                $("#add-mat1-rate").val($newrate);
-                                $("#show-mat1-rate").val($newrate);
+                            $("#add-mat1-m").val(data);
+                            $("#show-mat1-m").val(data);
+                            $("#add-mat1-a-m").val(1);
+
+                            $.ajax({    
+                                type: "POST",
+                                url: "includes/get-mat-rate.inc.php",
+                                data: {
+                                    "mat" : $mat 
+                                },       
+                                dataType: "html",                  
+                                success: function(data){
+                                    $("#add-mat1-rate").val(data);
+                                    $("#show-mat1-rate").val(data);
+                                    $("#add-mat1-a-m").change(function(e){
+                                        $rate = data;
+                                        $amount = $("#add-mat1-a-m").val();
+                                        $qty =  $rate / $amount / $rate;
+                                        $price = $qty * $rate;
+
+                                        $("#add-mat1-qty").val($qty);
+
+                                        $("#add-mat1-rate").val($price);
+                                        $("#show-mat1-rate").val($price);
+                                    });
+                                }
                             });
+
+
+                            // $("#add-mat1-qty").change(function(e){
+                            //     $qty = $("#add-mat1-qty").val();
+                            //     $newrate = $qty * data;
+                            //     $("#add-mat1-rate").val($newrate);
+                            //     $("#show-mat1-rate").val($newrate);
+                            // });
                         }
                     });
                 });
