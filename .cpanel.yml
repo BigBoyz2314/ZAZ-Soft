@@ -11,3 +11,4 @@ deployment:
     - /bin/cp -R js $DEPLOYPATH
     - /bin/cp -R unisoft $DEPLOYPATH
     - /bin/cp -R HR $DEPLOYPATH
+    - /bin/cp -R shop $DEPLOYPATH
